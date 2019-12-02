@@ -72,9 +72,8 @@ const Calendar = function (currentDay, day = new Date()) {
 
     this.printCalendar = function () {
         let i, j;
-        let print = [];
         let line;
-        for (i = 0; i <= matrixDay[i].length; i++) {
+        for (i = 0; i < 7; i++) {
             line = "";
             for (j = 0; j < matrixDay[i].length; j++) {
                 line = line + matrixDay[i][j] + " ";
