@@ -1,0 +1,126 @@
+/* line 1, ../../../Desktop/calendar/styles/scss/style.scss */
+.main {
+  width: 100%;
+  height: 100vh;
+  margin: 0 auto;
+  background-color: #a56b24;
+  padding: 50px;
+}
+
+/* line 9, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar {
+  margin: 0 auto;
+  width: 500px;
+  box-shadow: -1px 2px 4px 0px rgba(50, 50, 50, 0.7);
+  background-color: #fff;
+}
+
+/* line 14, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar_flexbox {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* line 20, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar_posRel {
+  position: relative;
+}
+
+/* line 25, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar__month {
+  width: 50%;
+  height: 100%;
+}
+
+/* line 28, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar__month_margANDpad {
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+/* line 32, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar__month_flexbox {
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* line 41, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar__head {
+  width: 100%;
+  height: 30px;
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+}
+
+/* line 50, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar__headH4 {
+  display: inline-block;
+  margin: 0 0;
+  margin-bottom: 5px;
+  padding: 0 5px;
+}
+
+/* line 57, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar__year {
+  display: inline-block;
+  margin: 0 0;
+  margin-bottom: 5px;
+}
+
+/* line 63, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar__table {
+  width: 100%;
+  text-align: center;
+  vertical-align: middle;
+  display: flex;
+  flex-flow: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+/* line 75, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar__table div {
+  width: 20px;
+  height: 140px;
+  opacity: 0.5;
+  display: flex;
+  flex-flow: column;
+  justify-content: start;
+  align-items: center;
+}
+
+/* line 85, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar__table div span {
+  display: inline-block;
+  width: 100%;
+  height: 20px;
+}
+
+/* line 92, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar__leftArrow {
+  position: absolute;
+  top: 20px;
+  left: 30px;
+}
+
+/* line 98, ../../../Desktop/calendar/styles/scss/style.scss */
+.calendar__rightArrow {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+}
+
+/* line 104, ../../../Desktop/calendar/styles/scss/style.scss */
+.today {
+  opacity: 1 !important;
+  outline: 1px red solid;
+}
+
+/*# sourceMappingURL=style.css.map */
