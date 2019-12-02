@@ -1,7 +1,7 @@
 "use strict";
 
-const Calendar = function () {
-    let today = new Date();
+const Calendar = function (currentDay, day = new Date()) {
+    let today = day;
     let month = today.getMonth();
     let years = today.getFullYear();
     let selectDay = null;
@@ -23,8 +23,8 @@ const Calendar = function () {
         "Октябрь", "Ноябрь", "Декабрь"
     ];
     const weekDays = [
-        "Понедельник", "Вторник", "Среда",
-        "Четверг", "Пятница", "Суббота", "Воскресенье", 
+        "Пн", "Вт", "Ср",
+        "Чт", "Пт", "Сб", "Вс", 
     ];
 
     /**
@@ -70,7 +70,19 @@ const Calendar = function () {
     this.nextMonth = () => {month++};
     this.preMonth = () => {month--};
 
-    this.printCalendar = function () {};
+    this.printCalendar = function () {
+        let i, j;
+        let print = [];
+        let line;
+        for (i = 0; i < matrixDay[i].length; i++) {
+            line = "";
+            for (j = 0; j < matrixDay[i].length; j++) {
+                line = line + matrixDay[i][j] + " ";
+            };
+            print.push(line);
+        };
+        return console.log(print);
+    };
 
     this.setMatrixDay = () => {
         return buildMatrixDay();
@@ -88,9 +100,4 @@ const Calendar = function () {
 const calendar1 = new Calendar();
 calendar1.setMatrixDay();
 console.log(calendar1.getMatrixDay(0));
-console.log(calendar1.getMatrixDay(1));
-console.log(calendar1.getMatrixDay(2));
-console.log(calendar1.getMatrixDay(3));
-console.log(calendar1.getMatrixDay(4));
-console.log(calendar1.getMatrixDay(5));
-console.log(calendar1.getMatrixDay(6));
+calendar1.printCalendar();
