@@ -41,7 +41,7 @@ const Calendar = function (currentDay, day = new Date()) {
             counterDays = 0;
             for (counterDays; counterDays < 7 && numberMonth <= lastDayOfMonth; counterDays++) {
                 if (counterDays < getDayOfWeek(firstDayOfMonth) && week === 1) {
-                    matrix[week].push(' ');
+                    matrix[week].push('  ');
                 } else {
                     matrix[week].push(numberMonth);
                     numberMonth++;
@@ -74,14 +74,13 @@ const Calendar = function (currentDay, day = new Date()) {
         let i, j;
         let print = [];
         let line;
-        for (i = 0; i < matrixDay[i].length; i++) {
+        for (i = 0; i <= matrixDay[i].length; i++) {
             line = "";
             for (j = 0; j < matrixDay[i].length; j++) {
                 line = line + matrixDay[i][j] + " ";
             };
-            print.push(line);
+            console.log(line);
         };
-        return console.log(print);
     };
 
     this.setMatrixDay = () => {
@@ -99,5 +98,4 @@ const Calendar = function (currentDay, day = new Date()) {
 
 const calendar1 = new Calendar();
 calendar1.setMatrixDay();
-console.log(calendar1.getMatrixDay(0));
 calendar1.printCalendar();
