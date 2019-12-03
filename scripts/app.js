@@ -1,8 +1,8 @@
 "use strict";
 
-const Calendar = function (currentDay, day = new Date()) {
+const Calendar = function (initMonth = 0, currentDay, day = new Date()) {
     let today = day;
-    let month = today.getMonth();
+    let month = today.getMonth() + initMonth;
     let years = today.getFullYear();
     let selectDay = null;
     let firstDayOfMonth = new Date(years, month, 1).getDay();
@@ -39,12 +39,12 @@ const Calendar = function (currentDay, day = new Date()) {
         week++;
         for (week; week <= 6; week++) {
             counterDays = 0;
-            for (counterDays; counterDays < 7 && numberMonth <= lastDayOfMonth; counterDays++) {
+            for (counterDays; counterDays < 7 && numberMonth <= lastDayOfMonth; ++counterDays) {
                 if (counterDays < getDayOfWeek(firstDayOfMonth) && week === 1) {
                     matrix[week].push(' ');
                 } else {
                     matrix[week].push(numberMonth);
-                    numberMonth++;
+                    ++numberMonth;
                 };
             }
         }
@@ -56,7 +56,7 @@ const Calendar = function (currentDay, day = new Date()) {
                 if (counter % 6 === 0) {
                     counter = 6;
                 } else {
-                    counter = count % 6;
+                    counter = counter % 6 - 1;
                 }
                 return parseInt(counter);
     }
@@ -67,8 +67,16 @@ const Calendar = function (currentDay, day = new Date()) {
             }; 
     }
 
-    this.nextMonth = () => {month++};
-    this.preMonth = () => {month--};
+    this.nextMonth = () => {
+        let nextMonth = new Calendar(1);
+        nextMonth.setMatrixDay();
+        nextMonth.printCalendar();
+    };
+    this.preMonth = () => {
+        let preMonth = new Calendar(-1);
+        preMonth.setMatrixDay();
+        preMonth.printCalendar();
+    };
 
     this.printCalendar = function () {
         let i, j;
@@ -102,3 +110,6 @@ const Calendar = function (currentDay, day = new Date()) {
 const calendar1 = new Calendar();
 calendar1.setMatrixDay();
 calendar1.printCalendar();
+
+calendar1.nextMonth();
+calendar1.preMonth();
