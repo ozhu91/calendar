@@ -37,14 +37,20 @@ const Calendar = function (conf) {
         return firstDayOfMonth ? firstDayOfMonth - 1 : 6;
     };
 
+    function getNewMonth() {
+        return month % 12 ? month % 12 : 12;
+    };
+
     this.nextMonth = () => {
         month++;
+        years = new Date(years, getNewMonth(), 1).getFullYear();
         firstDayOfMonth = new Date(years, month, 1).getDay();
         lastDateOfMonth = new Date(years, month + 1, 0).getDate();
     };
 
     this.preMonth = () => {
         month--;
+        years = new Date(years, getNewMonth(), 1).getFullYear();
         firstDayOfMonth = new Date(years, month, 1).getDay();
         lastDateOfMonth = new Date(years, month - 1, 0).getDate();
     };
@@ -53,7 +59,7 @@ const Calendar = function (conf) {
         let dayOfMonth = 1;
         let calendarTable = `
         <div class="calendar__month" data-month="${months[month % 12]}">
-        <h3 class="calendar__monthHead">${months[month % 12]}</h3>
+        <h3 class="calendar__monthHead">${months[month % 12]} ${years}</h3>
         <div class="calendar__row" data-head="dayOfWeek">
         `;
         for (let i = 0; i < weekDays.length; i++) {
@@ -87,6 +93,42 @@ const configCalendar = {
 
 const calendar1 = new Calendar(configCalendar);
 calendar1.preMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
 calendar1.render();
 calendar1.nextMonth();
 calendar1.render();
