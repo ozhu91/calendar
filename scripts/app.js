@@ -1,21 +1,27 @@
 "use strict";
 
-const Calendar = function (initMonth = 0, currentDay, day = new Date()) {
-    let today = day;
-    let month = today.getMonth() + initMonth;
-    let years = today.getFullYear();
-    let selectDay = null;
+const outFirst = document.querySelector('#out-first');
+const outSecond = document.querySelector('#out-second');
+
+document.querySelector('#clear').onclick = function () {
+    outFirst.innerHTML = "";
+    outSecond.innerHTML = "";
+}
+//==========================================================
+
+const Calendar = function (conf) {
+    const {
+        selectDay = null,
+            adapt = true,
+            selector = null,
+            day = new Date(),
+            classActiveDay = "",
+    } = conf;
+    let month = day.getMonth(); //
+    let years = day.getFullYear(); //
     let firstDayOfMonth = new Date(years, month, 1).getDay();
-    let lastDayOfMonth = new Date(years, month + 1, 0).getDate();
-    let matrixDay = [
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-        [],
-    ];
+    let lastDateOfMonth = new Date(years, month + 1, 0).getDate(); //date
+    const outTag = document.querySelector(selector);
     const months = [
         "Январь", "Февраль", "Март",
         "Апрель", "Май", "Июнь",
@@ -24,92 +30,67 @@ const Calendar = function (initMonth = 0, currentDay, day = new Date()) {
     ];
     const weekDays = [
         "Пн", "Вт", "Ср",
-        "Чт", "Пт", "Сб", "Вс", 
+        "Чт", "Пт", "Сб", "Вс",
     ];
 
-    /**
-     * метод заполняет полностью двумерный массив matrixDay
-     */
-    function buildMatrixDay() {
-        let matrix = matrixDay;
-        let numberMonth = 1;
-        let counterDays = 0;
-        let week = 0;
-        buildMatrixWeekDay(counterDays, week, matrix);
-        week++;
-        for (week; week <= 6; week++) {
-            counterDays = 0;
-            for (counterDays; counterDays < 7 && numberMonth <= lastDayOfMonth; ++counterDays) {
-                if (counterDays < getDayOfWeek(firstDayOfMonth) && week === 1) {
-                    matrix[week].push(' ');
-                } else {
-                    matrix[week].push(numberMonth);
-                    ++numberMonth;
-                };
-            }
-        }
-        return matrixDay = matrix;
+    function getFirstDayOfMonth() {
+        return firstDayOfMonth ? firstDayOfMonth - 1 : 6;
     };
-
-    function getDayOfWeek(day) {
-                let counter = day;
-                if (counter % 6 === 0) {
-                    counter = 6;
-                } else {
-                    counter = counter % 6 - 1;
-                }
-                return parseInt(counter);
-    }
-
-    function buildMatrixWeekDay(counter, week, matrix) {
-            for (counter; counter < 7; counter++) {
-                    matrix[week].push(weekDays[counter]);
-            }; 
-    }
 
     this.nextMonth = () => {
-        let nextMonth = new Calendar(1);
-        nextMonth.setMatrixDay();
-        nextMonth.printCalendar();
+        month++;
+        firstDayOfMonth = new Date(years, month, 1).getDay();
+        lastDateOfMonth = new Date(years, month + 1, 0).getDate();
     };
+
     this.preMonth = () => {
-        let preMonth = new Calendar(-1);
-        preMonth.setMatrixDay();
-        preMonth.printCalendar();
+        month--;
+        firstDayOfMonth = new Date(years, month, 1).getDay();
+        lastDateOfMonth = new Date(years, month - 1, 0).getDate();
     };
 
-    this.printCalendar = function () {
-        let i, j;
-        let line;
-        for (i = 0; i < 7; i++) {
-            line = "";
-            for (j = 0; j < matrixDay[i].length; j++) {
-                if (matrixDay[i][j] < 10) {
-                    line = line + matrixDay[i][j] + "  ";
+    this.render = function () {
+        let dayOfMonth = 1;
+        let calendarTable = `
+        <div class="calendar__month" data-month="${months[month % 12]}">
+        <h3 class="calendar__monthHead">${months[month % 12]}</h3>
+        <div class="calendar__row" data-head="dayOfWeek">
+        `;
+        for (let i = 0; i < weekDays.length; i++) {
+            calendarTable += `<span class="calendar__item" data-weekDays="${i}">${weekDays[i]}</span>`;
+        }
+        calendarTable += `</div>`;
+        for (let week = 0; week <= 5; week++) {
+            calendarTable += `<div class="calendar__row" data-week="${week}">`;
+            for (let value = 0; value < 7 && dayOfMonth <= lastDateOfMonth; value++) {
+                if (value < getFirstDayOfMonth() && week === 0) {
+                    calendarTable += `<span class="calendar__item" data-day="emptyItem"></span>`;
                 } else {
-                    line = line + matrixDay[i][j] + " ";
+                    calendarTable += `<span class="calendar__item" data-day="${dayOfMonth}">${dayOfMonth}</span>`;
+                    dayOfMonth++;
                 }
-            };
-            console.log(line);
-        };
+            }
+            calendarTable += `</div>`;
+        }
+        calendarTable += `</div>`;
+        outTag.insertAdjacentHTML("beforeend", calendarTable);
     };
-
-    this.setMatrixDay = () => {
-        return buildMatrixDay();
-    };
-
-    this.getMatrixDay = (week) => {
-        return matrixDay[week];
-    };
-
-    // this.setDay = (day) => selectDay = day;
-    // this.getDay = () => {};
 };
 
+const configCalendar = {
+    selectDay: null,
+    adapt: true,
+    selector: "#calendar",
+    day: new Date(),
+    classActiveDay: ".activeDay",
+}
 
-const calendar1 = new Calendar();
-calendar1.setMatrixDay();
-calendar1.printCalendar();
-
-calendar1.nextMonth();
+const calendar1 = new Calendar(configCalendar);
 calendar1.preMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
+calendar1.nextMonth();
+calendar1.render();
