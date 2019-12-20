@@ -4,9 +4,9 @@ body {
 }
 
 /* line 5, ../../../Desktop/Month/styles/scss/style.scss */
-#calendar {
-  width: 100%;
-  height: 100%;
+#calendar, #calendar-next {
+  width: 310px;
+  height: 310px;
   display: flex;
   flex-flow: row;
   flex-wrap: wrap;
@@ -18,8 +18,8 @@ body {
 
 /* line 17, ../../../Desktop/Month/styles/scss/style.scss */
 .calendar__month {
-  width: 270px;
-  height: 270px;
+  width: 100%;
+  height: 100%;
   text-align: center;
   box-sizing: border-box;
   margin: 10px 0;
@@ -61,13 +61,13 @@ body {
 }
 
 /* line 57, ../../../Desktop/Month/styles/scss/style.scss */
-.selectDay {
-  color: green;
+.calendar__selectDay {
+  color: red !important;
 }
 
 /* line 61, ../../../Desktop/Month/styles/scss/style.scss */
-.activeDay {
-  color: red;
+.calendar__activeDay {
+  color: #068b8b;
 }
 
 /*# sourceMappingURL=style.css.map */

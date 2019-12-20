@@ -11,16 +11,18 @@ document.querySelector('#clear').onclick = function () {
 
 const Calendar = function (conf) {
     const {
-        selectDay = null,
-            adapt = true,
+        adapt = true,
             selector = null,
             day = new Date(),
             classActiveDay = "",
     } = conf;
-    let month = day.getMonth(); //
-    let years = day.getFullYear(); //
+    let {
+        selectDay = null
+    } = conf;
+    let month = day.getMonth();
+    let years = day.getFullYear();
     let firstDayOfMonth = new Date(years, month, 1).getDay();
-    let lastDateOfMonth = new Date(years, month + 1, 0).getDate(); //date
+    let lastDateOfMonth = new Date(years, month + 1, 0).getDate();
     const outTag = document.querySelector(selector);
     const months = [
         "Январь", "Февраль", "Март",
@@ -33,33 +35,21 @@ const Calendar = function (conf) {
         "Чт", "Пт", "Сб", "Вс",
     ];
 
+    /**
+     * метод перевода недели на русскую раскладку пн-вс
+     */
     function getFirstDayOfMonth() {
         return firstDayOfMonth ? firstDayOfMonth - 1 : 6;
     };
 
-    function getNewMonth() {
-        return month % 12 ? month % 12 : 12;
-    };
-
-    this.nextMonth = () => {
-        month++;
-        years = new Date(years, getNewMonth(), 1).getFullYear();
-        firstDayOfMonth = new Date(years, month, 1).getDay();
-        lastDateOfMonth = new Date(years, month + 1, 0).getDate();
-    };
-
-    this.preMonth = () => {
-        month--;
-        years = new Date(years, getNewMonth(), 1).getFullYear();
-        firstDayOfMonth = new Date(years, month, 1).getDay();
-        lastDateOfMonth = new Date(years, month - 1, 0).getDate();
-    };
-
-    this.render = function () {
+    /**
+     * метод отрисовки календаря
+     */
+    function initRender() {
         let dayOfMonth = 1;
         let calendarTable = `
-        <div class="calendar__month" data-month="${months[month % 12]}">
-        <h3 class="calendar__monthHead">${months[month % 12]} ${years}</h3>
+        <div class="calendar__month" data-month="${months[month]}">
+        <h3 class="calendar__monthHead">${months[month]} ${years}</h3>
         <div class="calendar__row" data-head="dayOfWeek">
         `;
         for (let i = 0; i < weekDays.length; i++) {
@@ -79,60 +69,110 @@ const Calendar = function (conf) {
             calendarTable += `</div>`;
         }
         calendarTable += `</div>`;
-        outTag.insertAdjacentHTML("beforeend", calendarTable);
+        outTag.innerHTML = calendarTable;
+        isToDay();
     };
+
+    /**
+     * метод отмечает сегодняшний день
+     */
+    function isToDay() {
+        let currentDate = new Date(years, month, 1);
+        let activeDate = new Date();
+        if (currentDate.getFullYear() === activeDate.getFullYear() && currentDate.getMonth() === activeDate.getMonth()) {
+            let nowDate = activeDate.getDate();
+            outTag.querySelector(`${selector} span[data-day='${nowDate}']`).classList.add("calendar__activeDay");
+        } else return
+    }
+
+    /**
+     * метод вызова следующего месяца
+     */
+    this.nextMonth = () => {
+        if (month === 11) {
+            years++;
+            month = 0;
+        } else {
+            month++;
+        }
+        firstDayOfMonth = new Date(years, month, 1).getDay();
+        lastDateOfMonth = new Date(years, month + 1, 0).getDate();
+        initRender();
+    };
+
+    /**
+     * метод вызова предыдущего месяца
+     */
+    this.preMonth = () => {
+        if (!month) {
+            month = 11;
+            years--;
+        } else {
+            month--;
+        }
+        firstDayOfMonth = new Date(years, month, 1).getDay();
+        lastDateOfMonth = new Date(years, month - 1, 0).getDate();
+        initRender();
+    };
+
+    /**
+     * метод выделения выбранных дней в календаре
+     */
+    this.selectingDays = (initDaysOfMonth, initClass) => {
+        let arrDays = initDaysOfMonth.split(' ');
+        outTag.querySelector(`${selector} span[data-day]`).classList.remove(`${initClass}`);
+        arrDays.forEach(element => {
+            outTag.querySelector(`${selector} span[data-day='${element}']`).classList.add(`${initClass}`);
+        });
+    }
+
+    initRender();
+
+    outTag.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!target.dataset.day) {
+            return;
+        }
+        if (document.querySelector(`.calendar__selectDay`) != null) {
+            document.querySelectorAll(`.calendar__selectDay`).forEach(element => {
+                element.classList.remove("calendar__selectDay");
+            })
+        }
+        selectDay = Number(target.dataset.day);
+        target.classList.add("calendar__selectDay");
+    });
+
+
 };
+
+let currentDate = new Date();
 
 const configCalendar = {
     selectDay: null,
     adapt: true,
     selector: "#calendar",
-    day: new Date(),
-    classActiveDay: ".activeDay",
+    day: currentDate,
+    classSelectDay: ".calendar__selectDay",
 }
 
 const calendar1 = new Calendar(configCalendar);
-calendar1.preMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
-calendar1.nextMonth();
-calendar1.render();
+
+currentDate.setMonth(currentDate.getMonth() + 1);
+configCalendar.selector = "#calendar-next";
+configCalendar.day = currentDate;
+
+const calendarNext = new Calendar(configCalendar);
+
+document.querySelector('#next')
+    .addEventListener('click', () => {
+        calendar1.nextMonth();
+        calendarNext.nextMonth();
+    })
+
+document.querySelector('#prev')
+    .addEventListener('click', () => {
+        calendar1.preMonth();
+        calendarNext.preMonth();
+    })
+
+    calendar1.selectingDays('1 2 3 8 9 10 11 28 29', "calendar__selectDay");

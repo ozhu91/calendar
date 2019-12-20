@@ -2,9 +2,9 @@ body {
   min-height: 100vh;
 }
 
-#calendar {
-  width: 100%;
-  height: 100%;
+#calendar, #calendar-next {
+  width: 310px;
+  height: 310px;
   display: flex;
   flex-flow: row;
   flex-wrap: wrap;
@@ -15,8 +15,8 @@ body {
 }
 
 .calendar__month {
-  width: 270px;
-  height: 270px;
+  width: 100%;
+  height: 100%;
   text-align: center;
   box-sizing: border-box;
   margin: 10px 0;
@@ -54,10 +54,14 @@ line-height: 30px;  margin: 0 0;
   text-align: center;
 }
 
-.selectDay {
-  color: green;
+.calendar__selectDay {
+  color: red!important;
 }
 
-.activeDay {
-  color: red;
+.calendar__activeDay {
+  color: rgb(6, 139, 139);
+}
+
+.selectingDay {
+  color: blue;
 }
