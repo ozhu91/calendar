@@ -119,9 +119,7 @@ const Calendar = function (conf) {
      * метод выделения выбранных дней в календаре
      */
     this.selectingDays = (initDaysOfMonth, initClass) => {
-        let arrDays = initDaysOfMonth.split(' ');
-        outTag.querySelector(`${selector} span[data-day]`).classList.remove(`${initClass}`);
-        arrDays.forEach(element => {
+        initDaysOfMonth.split(' ').forEach(element => {
             outTag.querySelector(`${selector} span[data-day='${element}']`).classList.add(`${initClass}`);
         });
     }
