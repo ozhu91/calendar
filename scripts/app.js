@@ -118,10 +118,12 @@ const Calendar = function (conf) {
     /**
      * метод выделения выбранных дней в календаре
      */
-    this.selectingDays = (initDaysOfMonth, initClass) => {
-        initDaysOfMonth.split(' ').forEach(element => {
-            outTag.querySelector(`${selector} span[data-day='${element}']`).classList.add(`${initClass}`);
-        });
+     this.selectingDays = (arr) => {
+         for (let i = 0; i < arr.length; i++) {
+            arr[i].days.forEach(function(elem) {
+                outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${arr[i].class}`);
+            })
+         }
     }
 
     initRender();
@@ -173,4 +175,14 @@ document.querySelector('#prev')
         calendarNext.preMonth();
     })
 
-    calendar1.selectingDays('1 2 3 8 9 10 11 28 29', "calendar__selectDay");
+    const configSelectDays = [
+        {
+            days: [1, 2, 3, 4, 5, 6],
+            class: "calendar__selectDay",
+        },
+        {
+            days: [11, 12, 13, 14, 15, 16],
+            class: "calendar__activeDay",
+        },
+    ]
+    calendar1.selectingDays(configSelectDays);
