@@ -1,21 +1,19 @@
 "use strict";
+// Будем переделавать календарь под паттерн MVC (Model-View-Controller)
 
-const outFirst = document.querySelector('#out-first');
-const outSecond = document.querySelector('#out-second');
-
-document.querySelector('#clear').onclick = function () {
-    outFirst.innerHTML = "";
-    outSecond.innerHTML = "";
-}
-//==========================================================
-
+// TODO: переименовать класс в CalendarView
+//       тут будет только View - предстовление,
+//       т.е. то что выводит информацию
+//       сюда будем только передовать текужий месяц/год и как форматировать дни
 const Calendar = function (conf) {
+    // TODO: исрпавить форматирование ниже  
     const {
         adapt = true,
             selector = null,
             day = new Date(),
             classActiveDay = "",
     } = conf;
+    // TODO: selectDay во View не нужна.
     let {
         selectDay = null
     } = conf;
@@ -24,12 +22,18 @@ const Calendar = function (conf) {
     let firstDayOfMonth = new Date(years, month, 1).getDay();
     let lastDateOfMonth = new Date(years, month + 1, 0).getDate();
     const outTag = document.querySelector(selector);
+    // TODO: пора добавить поддержку других языков.
+    //       нужно переделать в массив объектов где ключь, это язык (rus, eng)
+    //       а значение, это название методов
     const months = [
         "Январь", "Февраль", "Март",
         "Апрель", "Май", "Июнь",
         "Июль", "Август", "Сентябрь",
         "Октябрь", "Ноябрь", "Декабрь"
     ];
+    // TODO: пора добавить поддержку других языков.
+    //       нужно переделать в массив объектов где ключь, это язык (rus, eng)
+    //       а значение, это название методов
     const weekDays = [
         "Пн", "Вт", "Ср",
         "Чт", "Пт", "Сб", "Вс",
@@ -76,6 +80,7 @@ const Calendar = function (conf) {
     /**
      * метод отмечает сегодняшний день
      */
+    // TODO: убрать этот метод он будет в контроллере, который напишем позже
     function isToDay() {
         let currentDate = new Date(years, month, 1);
         let activeDate = new Date();
@@ -88,6 +93,7 @@ const Calendar = function (conf) {
     /**
      * метод вызова следующего месяца
      */
+    // TODO: этот метод будет в контроллере, но пока оставь здесь
     this.nextMonth = () => {
         if (month === 11) {
             years++;
@@ -103,6 +109,7 @@ const Calendar = function (conf) {
     /**
      * метод вызова предыдущего месяца
      */
+    // TODO: этот метод будет в контроллере, но пока оставь здесь
     this.preMonth = () => {
         if (!month) {
             month = 11;
@@ -119,6 +126,26 @@ const Calendar = function (conf) {
      * метод выделения выбранных дней в календаре
      */
      this.selectingDays = (arr) => {
+         // TODO: сделать так, чтобы можно было кроме массива объектов 
+         //       передовать просто объект и работало всё корректно
+         //       т.е. я могу передать, либо массив объектов, либо объект
+         //       и всё будет корректно отрисовываться
+         // TODO: если я опечатаюсь и вместо ключа days напишу day,
+         //       получу TypeError: Cannot read property 'forEach' of undefined
+         //       что будет не совсем понятно для того, кто пользуется твоей библиотекой
+         //       поэтому проверяй входной параметр и генерируй соответствующие ошибки
+         //       если с ним что-то не то. смотри https://learn.javascript.ru/custom-errors
+         // TODO: сделать так, чтобы для форматирования дней, кроме класса можно было
+         //       передать цвет или обвести в рамку, или сделать жирным, или прозрачным
+         //       т.е. вот такой объект
+         //       {
+         //          days: Array, *обязательное поле, остальные не обязательные
+         //          class: String,
+         //          color: String,
+         //          border: Boolean,
+         //          strong: Boolean
+         //       }
+         //       зачастую удобнее передовать не класс, а цвет, например
          for (let i = 0; i < arr.length; i++) {
             arr[i].days.forEach(function(elem) {
                 outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${arr[i].class}`);
@@ -128,6 +155,8 @@ const Calendar = function (conf) {
 
     initRender();
 
+    // TODO: вместо обработки клика вызывать custom event https://learn.javascript.ru/dispatch-events
+    //       чтобы его можно было обработать вне объекта Calendar
     outTag.addEventListener("click", (event) => {
         const target = event.target;
         if (!target.dataset.day) {
@@ -181,7 +210,7 @@ document.querySelector('#prev')
             class: "calendar__selectDay",
         },
         {
-            days: [11, 12, 13, 14, 15, 16],
+            day: [11, 12, 13, 14, 15, 16],
             class: "calendar__activeDay",
         },
     ]
