@@ -1,6 +1,41 @@
 "use strict";
 // Будем переделавать календарь под паттерн MVC (Model-View-Controller)
 
+class ValidationError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "ValidationError";
+    }
+}
+
+function isValidationError(obj) {
+    let objValid = obj;
+    if (!objValid.day) {
+        throw new ValidationError(`Config - Нет поля: day`);
+    }
+    if (typeof objValid.class != "string") {
+        throw new ValidationError(`Config - class: is not string`);
+    }
+    if (typeof objValid.color != "string") {
+        throw new ValidationError(`Config - color: is not string`);
+    }
+    if (typeof objValid.border != "boolean") {
+        throw new ValidationError(`Config - border: is not boolean`);
+    }
+    if (typeof objValid.strong != "boolean") {
+        throw new ValidationError(`Config - strong: is not boolean`);
+    }
+    return objValid;
+}
+
+function validationSelectConf(obj) {
+    try {
+        return isValidationError(obj);
+    } catch (err) {
+        alert("Некорректные данные " + err.message)
+    }
+}
+
 const CalendarView = function (conf) {
     // TODO: исрпавить форматирование ниже  
     const {
@@ -145,15 +180,18 @@ const CalendarView = function (conf) {
         //          strong: Boolean
         //       }
         //       зачастую удобнее передовать не класс, а цвет, например
+
         if (conf.day === day) {
             return
         }
         if (typeof conf['day'] !== "undefined") {
+            validationSelectConf(conf);
             conf.day.forEach(function (elem) {
                 outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${conf.class}`);
             });
         } else {
             for (let i = 0; i < conf.length; i++) {
+                validationSelectConf(conf[i]);
                 conf[i].day.forEach(function (elem) {
                     outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${conf[i].class}`);
                 })
@@ -182,34 +220,6 @@ const CalendarView = function (conf) {
     });
 };
 
-class ConfigCalendar {
-    costructor(selectDay, adapt = true, selector, day, classSelectDay, lang = 'rus') {
-        this.selectDay = selectDay;
-        this.adapt = adapt;
-        this.selector = selector;
-        this.day = day;
-        this.classSelectDay = classSelectDay;
-        this.lang = lang;
-    }
-}
-
-class configSelectDay {
-    costructor(day, activeClass = "", color = "", border = false, strong = false) {
-        this.day = day;
-        this.activeClass = activeClass;
-        this.color = color;
-        this.border = border;
-        this.strong = strong;
-    }
-}
-
-class ValidationError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = "ValidationError";
-    }
-}
-
 let currentDate = new Date();
 
 const configCalendar = {
@@ -218,7 +228,7 @@ const configCalendar = {
     selector: "#calendar",
     day: currentDate,
     classSelectDay: ".calendar__selectDay",
-    lang: "rus",
+    lang: "eng",
 }
 
 const calendar1 = new CalendarView(configCalendar);
@@ -244,72 +254,26 @@ document.querySelector('#prev')
 const configSelectDays = [{
         day: [1, 2, 3, 4, 5, 6],
         class: "calendar__selectDay",
+        color: '',
+        border: false,
+        strong: false,
     },
     {
         day: [11, 12, 13, 14, 15, 16],
         class: "calendar__activeDay",
+        color: '',
+        border: true,
+        strong: false,
     },
 ]
-calendar1.selectingDays(configSelectDays);
 
 const configSelectDays2 = {
     day: [1, 29, 30],
-    class: 55555,
-    color: 9999999999,
+    class: "calendar__activeDay",
+    color: '',
     border: false,
     strong: true,
 };
 
-calendar1.selectingDays(validateConfSelectDay(configSelectDays2));
-
-function validateConfSelectDay(conf) {
-    if (typeof conf['day'] !== "undefined") {
-        try {
-            conf.day.length > 0;
-            conf.activeClass == String;
-            conf.color == String;
-            conf.border == Boolean;
-            conf.strong == Boolean;
-            return conf;
-        } catch (err) {
-            if (conf.day.length) {
-                throw err;
-            } else if (!conf.activeClass === String) {
-                throw new ValidationError(console.log("Неверное значение activeClass" + err));
-            } else if (!conf.color === String) {
-                throw new ValidationError(console.log("Неверное значение color" + err));
-            } else if (!conf.border === Boolean) {
-                throw new ValidationError(console.log("Неверное значение border" + err));
-            } else if (!conf.strong === Boolean) {
-                throw new ValidationError(console.log("Неверное значение strong" + err));
-            } else {
-                throw err;
-            }
-        }
-    } else {
-        for (let i = 0; i < conf.length; i++) {
-            try {
-                conf[i].day.length > 0;
-                conf[i].activeClass == String;
-                conf[i].color == String;
-                conf[i].border == Boolean;
-                conf[i].strong == Boolean;
-                return conf;
-            } catch (err) {
-                if (conf[i].day.length) {
-                    throw err;
-                } else if (!conf[i].activeClass == String) {
-                    throw new ValidationError("Неверное значение activeClass", err);
-                } else if (!conf[i].color == String) {
-                    throw new ValidationError("Неверное значение color", err);
-                } else if (!conf[i].border == Boolean) {
-                    throw new ValidationError("Неверное значение border", err);
-                } else if (!conf[i].strong == Boolean) {
-                    throw new ValidationError("Неверное значение strong", err);
-                } else {
-                    throw err;
-                }
-            }
-        }
-    }
-}
+calendar1.selectingDays(configSelectDays);
+calendar1.selectingDays(configSelectDays2);
