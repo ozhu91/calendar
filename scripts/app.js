@@ -1,6 +1,7 @@
 "use strict";
 // Будем переделавать календарь под паттерн MVC (Model-View-Controller)
 
+
 class ValidationError extends Error {
     constructor(message) {
         super(message);
@@ -13,17 +14,25 @@ function isValidationError(obj) {
     if (!objValid.day) {
         throw new ValidationError(`Config - Нет поля: day`);
     }
-    if (typeof objValid.class != "string") {
-        throw new ValidationError(`Config - class: is not string`);
+    if (objValid.class) {
+        if (typeof objValid.class != "string") {
+            throw new ValidationError(`Config - class: is not string`);
+        }
     }
-    if (typeof objValid.color != "string") {
-        throw new ValidationError(`Config - color: is not string`);
+    if (objValid.color) {
+        if (typeof objValid.color != "string") {
+            throw new ValidationError(`Config - color: is not string`);
+        }
     }
-    if (typeof objValid.border != "boolean") {
-        throw new ValidationError(`Config - border: is not boolean`);
+    if (objValid.border) {
+        if (typeof objValid.border != "boolean") {
+            throw new ValidationError(`Config - border: is not boolean`);
+        }
     }
-    if (typeof objValid.strong != "boolean") {
-        throw new ValidationError(`Config - strong: is not boolean`);
+    if (objValid.strong) {
+        if (typeof objValid.strong != "boolean") {
+            throw new ValidationError(`Config - strong: is not boolean`);
+        }
     }
     return objValid;
 }
@@ -32,14 +41,14 @@ function validationSelectConf(obj) {
     try {
         return isValidationError(obj);
     } catch (err) {
-        alert("Некорректные данные " + err.message)
+        console.log("Некорректные данные " + err.message)
     }
 }
 
 const CalendarView = function (conf) {
     // TODO: исрпавить форматирование ниже  
     const {
-        adapt = true,
+            adapt = true,
             selector = null,
             day = new Date(),
             classActiveDay = "",
@@ -82,7 +91,7 @@ const CalendarView = function (conf) {
         }
 
     ];
-
+    this.selector = selector;
     function forSelectLang(arr) {
         for (let i = 0; i < arr.length; i++) {
             if (String(lang) in arr[i]) {
@@ -163,7 +172,7 @@ const CalendarView = function (conf) {
     /**
      * метод выделения выбранных дней в календаре
      */
-    this.selectingDays = (conf) => {
+    this.selectDays = (conf) => {
         // TODO: если я опечатаюсь и вместо ключа days напишу day,
         //       получу TypeError: Cannot read property 'forEach' of undefined
         //       что будет не совсем понятно для того, кто пользуется твоей библиотекой
@@ -184,40 +193,54 @@ const CalendarView = function (conf) {
         if (conf.day === day) {
             return
         }
-        if (typeof conf['day'] !== "undefined") {
-            validationSelectConf(conf);
+      
+        isValidationError(conf);
+        // if (Array.isArray(conf)) { // это не массив
+        //     conf.day.forEach(function (elem) {
+        //         outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${conf.class}`);
+        //     });
+        // } else {
+        //     for (let item in conf) {
+        //         conf[item].day.forEach(function (elem) {
+        //             outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${conf[item].class}`);
+        //         })
+        //     }
+        // }
+        conf.day.forEach(function (elem) {
+            outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${conf.class}`);
+        })
+
+        if (conf.color) {
             conf.day.forEach(function (elem) {
-                outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${conf.class}`);
+                outTag.querySelector(`${selector} span[data-day='${elem}']`).style.color = conf.color;
             });
-        } else {
-            for (let i = 0; i < conf.length; i++) {
-                validationSelectConf(conf[i]);
-                conf[i].day.forEach(function (elem) {
-                    outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${conf[i].class}`);
-                })
-            }
         }
 
+        if (conf.border) {
+            conf.day.forEach(function (elem) {
+                  outTag.querySelector(`${selector} span[data-day='${elem}']`).style.border = ".5px solid grey";
+              });
+        }
+        if (conf.border) {
+            conf.day.forEach(function (elem) {
+                  outTag.querySelector(`${selector} span[data-day='${elem}']`).style.fontWeight = 'bold';
+              });
+        }
 
     }
 
     initRender();
 
-    // TODO: вместо обработки клика вызывать custom event https://learn.javascript.ru/dispatch-events
-    //       чтобы его можно было обработать вне объекта Calendar
-    outTag.addEventListener("click", (event) => {
-        const target = event.target;
-        if (!target.dataset.day) {
+    outTag.addEventListener("click", (e) => {
+        const day = e.target;
+        if (!day.dataset.day) {
             return;
         }
-        if (document.querySelector(`.calendar__selectDay`) != null) {
-            document.querySelectorAll(`.calendar__selectDay`).forEach(element => {
-                element.classList.remove("calendar__selectDay");
-            })
-        }
-        selectDay = Number(target.dataset.day);
-        target.classList.add("calendar__selectDay");
+        const event = new CustomEvent('clickCalendar', {detail: day.dataset.day});
+        outTag.dispatchEvent(event);
     });
+      
+    
 };
 
 let currentDate = new Date();
@@ -251,29 +274,28 @@ document.querySelector('#prev')
         calendarNext.preMonth();
     })
 
-const configSelectDays = [{
-        day: [1, 2, 3, 4, 5, 6],
-        class: "calendar__selectDay",
-        color: '',
-        border: false,
-        strong: false,
-    },
-    {
-        day: [11, 12, 13, 14, 15, 16],
-        class: "calendar__activeDay",
-        color: '',
-        border: true,
-        strong: false,
-    },
-]
-
-const configSelectDays2 = {
-    day: [1, 29, 30],
-    class: "calendar__activeDay",
-    color: '',
-    border: false,
-    strong: true,
+const data = {
+  ar: {},
+  pushAr: function (day) {
+    if (day in data.ar) {
+      data.ar[day]++;
+    } else {
+      data.ar[day] = 1
+    }
+  }
 };
 
-calendar1.selectingDays(configSelectDays);
-calendar1.selectingDays(configSelectDays2);
+document.querySelector(calendar1.selector).addEventListener('clickCalendar', function(target) {
+  const PARAM = 50;
+  const day = target.detail;
+  data.pushAr(day);
+  const Q_DAY = data.ar[day]
+  console.log(data.ar);
+    calendar1.selectDays({
+    day: [target.detail],
+    class: "calendar__activeDay",
+    color: `rgb(${Q_DAY*PARAM}, 0, 0)`,
+    border: true,
+    strong: true,
+  })
+});
