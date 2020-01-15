@@ -57,7 +57,7 @@ body {
 .calendar__item {
   display: inline-block;
   box-sizing: border-box;
-  width: calc(100% / 7);
+  width: calc(100% / 7 - 2px);
   height: 30px;
   line-height: 30px;
   margin: 0 0;
@@ -74,6 +74,7 @@ body {
 .calendar__activeDay {
   color: #068b8b;
   box-shadow: 1px 1px 3px #575555 inset; 
+  box-sizing: border-box;
 }
 
 /*# sourceMappingURL=style.css.map */

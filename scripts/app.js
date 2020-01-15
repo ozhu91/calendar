@@ -288,7 +288,8 @@ const data = {
 document.querySelector(calendar1.selector).addEventListener('clickCalendar', function(target) {
   const PARAM = 50;
   const day = target.detail;
-  data.pushAr(day);
+  if(day != "emptyItem") {
+    data.pushAr(day);
   const Q_DAY = data.ar[day]
   console.log(data.ar);
     calendar1.selectDays({
@@ -298,4 +299,6 @@ document.querySelector(calendar1.selector).addEventListener('clickCalendar', fun
     border: true,
     strong: true,
   })
+  }
+  
 });
