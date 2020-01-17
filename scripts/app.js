@@ -1,7 +1,5 @@
 "use strict";
 // Будем переделавать календарь под паттерн MVC (Model-View-Controller)
-
-
 class ValidationError extends Error {
     constructor(message) {
         super(message);
@@ -12,7 +10,7 @@ class ValidationError extends Error {
 function isValidationError(obj) {
     let objValid = obj;
     if (!objValid.day) {
-        throw new ValidationError(`Config - Нет поля: day`);
+        throw new ValidationError(`Config - day is undefined`);
     }
     if (objValid.class) {
         if (typeof objValid.class != "string") {
@@ -41,19 +39,17 @@ function validationSelectConf(obj) {
     try {
         return isValidationError(obj);
     } catch (err) {
-        console.log("Некорректные данные " + err.message)
+        console.log("Type error" + err.message)
     }
 }
 
 const CalendarView = function (conf) {
-    // TODO: исрпавить форматирование ниже  
     const {
             adapt = true,
             selector = null,
             day = new Date(),
             classActiveDay = "",
     } = conf;
-    // TODO: selectDay во View не нужна.
     let {
         lang = initLang
     } = conf;
@@ -92,6 +88,7 @@ const CalendarView = function (conf) {
 
     ];
     this.selector = selector;
+
     function forSelectLang(arr) {
         for (let i = 0; i < arr.length; i++) {
             if (String(lang) in arr[i]) {
@@ -140,7 +137,6 @@ const CalendarView = function (conf) {
     /**
      * метод вызова следующего месяца
      */
-    // TODO: этот метод будет в контроллере, но пока оставь здесь
     this.nextMonth = () => {
         if (month === 11) {
             years++;
@@ -156,7 +152,6 @@ const CalendarView = function (conf) {
     /**
      * метод вызова предыдущего месяца
      */
-    // TODO: этот метод будет в контроллере, но пока оставь здесь
     this.preMonth = () => {
         if (!month) {
             month = 11;
@@ -173,39 +168,11 @@ const CalendarView = function (conf) {
      * метод выделения выбранных дней в календаре
      */
     this.selectDays = (conf) => {
-        // TODO: если я опечатаюсь и вместо ключа days напишу day,
-        //       получу TypeError: Cannot read property 'forEach' of undefined
-        //       что будет не совсем понятно для того, кто пользуется твоей библиотекой
-        //       поэтому проверяй входной параметр и генерируй соответствующие ошибки
-        //       если с ним что-то не то. смотри https://learn.javascript.ru/custom-errors
-        // TODO: сделать так, чтобы для форматирования дней, кроме класса можно было
-        //       передать цвет или обвести в рамку, или сделать жирным, или прозрачным
-        //       т.е. вот такой объект
-        //       {
-        //          days: Array, *обязательное поле, остальные не обязательные
-        //          class: String,
-        //          color: String,
-        //          border: Boolean,
-        //          strong: Boolean
-        //       }
-        //       зачастую удобнее передовать не класс, а цвет, например
-
         if (conf.day === day) {
             return
         }
-      
+
         isValidationError(conf);
-        // if (Array.isArray(conf)) { // это не массив
-        //     conf.day.forEach(function (elem) {
-        //         outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${conf.class}`);
-        //     });
-        // } else {
-        //     for (let item in conf) {
-        //         conf[item].day.forEach(function (elem) {
-        //             outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${conf[item].class}`);
-        //         })
-        //     }
-        // }
         conf.day.forEach(function (elem) {
             outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${conf.class}`);
         })
@@ -218,13 +185,13 @@ const CalendarView = function (conf) {
 
         if (conf.border) {
             conf.day.forEach(function (elem) {
-                  outTag.querySelector(`${selector} span[data-day='${elem}']`).style.border = ".5px solid grey";
-              });
+                outTag.querySelector(`${selector} span[data-day='${elem}']`).style.border = ".5px solid grey";
+            });
         }
         if (conf.border) {
             conf.day.forEach(function (elem) {
-                  outTag.querySelector(`${selector} span[data-day='${elem}']`).style.fontWeight = 'bold';
-              });
+                outTag.querySelector(`${selector} span[data-day='${elem}']`).style.fontWeight = 'bold';
+            });
         }
 
     }
@@ -236,11 +203,13 @@ const CalendarView = function (conf) {
         if (!day.dataset.day) {
             return;
         }
-        const event = new CustomEvent('clickCalendar', {detail: day.dataset.day});
+        const event = new CustomEvent('clickCalendar', {
+            detail: day.dataset.day
+        });
         outTag.dispatchEvent(event);
     });
-      
-    
+
+
 };
 
 let currentDate = new Date();
@@ -275,30 +244,29 @@ document.querySelector('#prev')
     })
 
 const data = {
-  ar: {},
-  pushAr: function (day) {
-    if (day in data.ar) {
-      data.ar[day]++;
-    } else {
-      data.ar[day] = 1
+    ar: {},
+    pushAr: function (day) {
+        if (day in data.ar) {
+            data.ar[day]++;
+        } else {
+            data.ar[day] = 1
+        }
     }
-  }
 };
 
-document.querySelector(calendar1.selector).addEventListener('clickCalendar', function(target) {
-  const PARAM = 50;
-  const day = target.detail;
-  if(day != "emptyItem") {
-    data.pushAr(day);
-  const Q_DAY = data.ar[day]
-  console.log(data.ar);
-    calendar1.selectDays({
-    day: [target.detail],
-    class: "calendar__activeDay",
-    color: `rgb(${Q_DAY*PARAM}, 0, 0)`,
-    border: true,
-    strong: true,
-  })
-  }
-  
+document.querySelector(calendar1.selector).addEventListener('clickCalendar', function (target) {
+    const PARAM = 50;
+    const day = target.detail;
+    if (day != "emptyItem") {
+        data.pushAr(day);
+        const Q_DAY = data.ar[day]
+        console.log(data.ar);
+        calendar1.selectDays({
+            day: [target.detail],
+            class: "calendar__activeDay",
+            color: `rgb(${Q_DAY*PARAM}, 0, 0)`,
+            border: true,
+            strong: true,
+        })
+    }
 });
