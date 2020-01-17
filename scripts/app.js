@@ -39,7 +39,7 @@ function validationSelectConf(obj) {
     try {
         return isValidationError(obj);
     } catch (err) {
-        console.log("Type error" + err.message)
+        console.log("Valid error" + err.message)
     }
 }
 
@@ -49,9 +49,7 @@ const CalendarView = function (conf) {
             selector = null,
             day = new Date(),
             classActiveDay = "",
-    } = conf;
-    let {
-        lang = initLang
+            lang = initLang,
     } = conf;
     let month = day.getMonth();
     let years = day.getFullYear();
@@ -188,7 +186,7 @@ const CalendarView = function (conf) {
                 outTag.querySelector(`${selector} span[data-day='${elem}']`).style.border = ".5px solid grey";
             });
         }
-        if (conf.border) {
+        if (conf.strong) {
             conf.day.forEach(function (elem) {
                 outTag.querySelector(`${selector} span[data-day='${elem}']`).style.fontWeight = 'bold';
             });
@@ -220,7 +218,7 @@ const configCalendar = {
     selector: "#calendar",
     day: currentDate,
     classSelectDay: ".calendar__selectDay",
-    lang: "eng",
+    lang: "rus",
 }
 
 const calendar1 = new CalendarView(configCalendar);
