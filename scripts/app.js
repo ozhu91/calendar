@@ -7,30 +7,45 @@ class ValidationError extends Error {
     }
 }
 
+// function isValidationError(obj) {
+//     let objValid = obj;
+//     if (!objValid.day) {
+//         throw new ValidationError(`Config - day is undefined`);
+//     }
+//     if (objValid.class) {
+//         if (typeof objValid.class != "string") {
+//             throw new ValidationError(`Config - class: is not string`);
+//         }
+//     }
+//     if (objValid.color) {
+//         if (typeof objValid.color != "string") {
+//             throw new ValidationError(`Config - color: is not string`);
+//         }
+//     }
+//     if (objValid.border) {
+//         if (typeof objValid.border != "boolean") {
+//             throw new ValidationError(`Config - border: is not boolean`);
+//         }
+//     }
+//     if (objValid.strong) {
+//         if (typeof objValid.strong != "boolean") {
+//             throw new ValidationError(`Config - strong: is not boolean`);
+//         }
+//     }
+//     return objValid;
+// }
+
 function isValidationError(obj) {
     let objValid = obj;
-    if (!objValid.day) {
-        throw new ValidationError(`Config - day is undefined`);
+    let errors = {
+        "day": () => {if (!objValid.day) throw new ValidationError(`Config - day is undefined`)},
+        "class": () => {if (typeof objValid.class != "string") throw new ValidationError(`Config - class: is not string`)},
+        "color": () => {if (typeof objValid.color != "string") throw new ValidationError(`Config - color: is not string`)},
+        "border": () => {if (typeof objValid.border != "boolean") throw new ValidationError(`Config - border: is not boolean`)},
+        "strong": () => {if (typeof objValid.strong != "boolean") throw new ValidationError(`Config - strong: is not boolean`)}
     }
-    if (objValid.class) {
-        if (typeof objValid.class != "string") {
-            throw new ValidationError(`Config - class: is not string`);
-        }
-    }
-    if (objValid.color) {
-        if (typeof objValid.color != "string") {
-            throw new ValidationError(`Config - color: is not string`);
-        }
-    }
-    if (objValid.border) {
-        if (typeof objValid.border != "boolean") {
-            throw new ValidationError(`Config - border: is not boolean`);
-        }
-    }
-    if (objValid.strong) {
-        if (typeof objValid.strong != "boolean") {
-            throw new ValidationError(`Config - strong: is not boolean`);
-        }
+    for (let key in objValid) {
+        (errors[key])();
     }
     return objValid;
 }
@@ -39,7 +54,7 @@ function validationSelectConf(obj) {
     try {
         return isValidationError(obj);
     } catch (err) {
-        console.log("Valid error" + err.message)
+        console.log("Validation error" + err.message)
     }
 }
 
@@ -263,8 +278,8 @@ document.querySelector(calendar1.selector).addEventListener('clickCalendar', fun
             day: [target.detail],
             class: "calendar__activeDay",
             color: `rgb(${Q_DAY*PARAM}, 0, 0)`,
-            border: true,
-            strong: true,
+            border: 15,
+            strong: "1421312",
         })
     }
 });
