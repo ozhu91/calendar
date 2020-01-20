@@ -1,61 +1,34 @@
 "use strict";
 // Будем переделавать календарь под паттерн MVC (Model-View-Controller)
-class ValidationError extends Error {
+
+const Validator = function (templateObj) {
+  
+  class ValidationError extends Error {
     constructor(message) {
         super(message);
         this.name = "ValidationError";
     }
-}
-
-// function isValidationError(obj) {
-//     let objValid = obj;
-//     if (!objValid.day) {
-//         throw new ValidationError(`Config - day is undefined`);
-//     }
-//     if (objValid.class) {
-//         if (typeof objValid.class != "string") {
-//             throw new ValidationError(`Config - class: is not string`);
-//         }
-//     }
-//     if (objValid.color) {
-//         if (typeof objValid.color != "string") {
-//             throw new ValidationError(`Config - color: is not string`);
-//         }
-//     }
-//     if (objValid.border) {
-//         if (typeof objValid.border != "boolean") {
-//             throw new ValidationError(`Config - border: is not boolean`);
-//         }
-//     }
-//     if (objValid.strong) {
-//         if (typeof objValid.strong != "boolean") {
-//             throw new ValidationError(`Config - strong: is not boolean`);
-//         }
-//     }
-//     return objValid;
-// }
-
-function isValidationError(obj) {
-    let objValid = obj;
-    let errors = {
-        "day": () => {if (!objValid.day) throw new ValidationError(`Config - day is undefined`)},
-        "class": () => {if (typeof objValid.class != "string") throw new ValidationError(`Config - class: is not string`)},
-        "color": () => {if (typeof objValid.color != "string") throw new ValidationError(`Config - color: is not string`)},
-        "border": () => {if (typeof objValid.border != "boolean") throw new ValidationError(`Config - border: is not boolean`)},
-        "strong": () => {if (typeof objValid.strong != "boolean") throw new ValidationError(`Config - strong: is not boolean`)}
+  }
+  
+  this.validator = function (validateObj) {
+    for (let key in templateObj) {
+        if (templateObj[key] instanceof Object && (typeof templateObj[key] !== "function")) {
+            if (typeof validateObj[key] !== typeof (templateObj[key].type)()) {
+                throw new ValidationError(`type error - ${key}: is not ${typeof (templateObj[key].type)()}`);
+              }
+              if (templateObj[key].required) {
+                  if (!validateObj[key]) {
+                    throw new ValidationError(`type error - ${key}: is required`);
+                  }
+              }
+        } else {
+            if (typeof validateObj[key] !== typeof (templateObj[key])()) {
+                throw new ValidationError(`type error - ${key}: is not ${typeof (templateObj[key])()}`);
+              }
+        }
     }
-    for (let key in objValid) {
-        (errors[key])();
-    }
-    return objValid;
-}
-
-function validationSelectConf(obj) {
-    try {
-        return isValidationError(obj);
-    } catch (err) {
-        console.log("Validation error" + err.message)
-    }
+  }
+  
 }
 
 const CalendarView = function (conf) {
@@ -64,8 +37,9 @@ const CalendarView = function (conf) {
             selector = null,
             day = new Date(),
             classActiveDay = "",
-            lang = initLang,
+            lang = 'eng',
     } = conf;
+    
     let month = day.getMonth();
     let years = day.getFullYear();
     let firstDayOfMonth = new Date(years, month, 1).getDay();
@@ -100,6 +74,21 @@ const CalendarView = function (conf) {
         }
 
     ];
+  
+    const validator = new Validator({
+      day: {
+        type: Array,
+        required: true,
+      },
+      color: String,
+      class: {
+        type: String,
+        required: true,
+      },
+      border: Boolean,
+      strong: Boolean,
+    })
+    
     this.selector = selector;
 
     function forSelectLang(arr) {
@@ -185,7 +174,7 @@ const CalendarView = function (conf) {
             return
         }
 
-        isValidationError(conf);
+        validator.validator(conf);
         conf.day.forEach(function (elem) {
             outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${conf.class}`);
         })
@@ -233,7 +222,6 @@ const configCalendar = {
     selector: "#calendar",
     day: currentDate,
     classSelectDay: ".calendar__selectDay",
-    lang: "rus",
 }
 
 const calendar1 = new CalendarView(configCalendar);
@@ -276,10 +264,10 @@ document.querySelector(calendar1.selector).addEventListener('clickCalendar', fun
         console.log(data.ar);
         calendar1.selectDays({
             day: [target.detail],
-            class: "calendar__activeDay",
+            class: "",
             color: `rgb(${Q_DAY*PARAM}, 0, 0)`,
-            border: 15,
-            strong: "1421312",
+            border: false,
+            strong: true,
         })
     }
 });
