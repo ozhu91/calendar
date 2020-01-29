@@ -1,6 +1,10 @@
-import {Validator} from './validation.js';
+import {
+    Validator
+} from './validation.js';
 
-export {CalendarView};
+export {
+    CalendarView
+};
 
 const CalendarView = function (conf) {
     const {
@@ -18,26 +22,26 @@ const CalendarView = function (conf) {
     const outTag = document.querySelector(selector);
 
     const monthsList = {
-      rus: ["Январь", "Февраль", "Март",
+        rus: ["Январь", "Февраль", "Март",
             "Апрель", "Май", "Июнь",
             "Июль", "Август", "Сентябрь",
             "Октябрь", "Ноябрь", "Декабрь"
-           ],
-      eng: ["January", "February", "March",
+        ],
+        eng: ["January", "February", "March",
             "April", "May", "June",
             "July", "August", "September",
             "October", "November", "December"
-           ]
+        ]
     };
 
     const weekDays = {
-            rus: ["Пн", "Вт", "Ср",
-                "Чт", "Пт", "Сб", "Вс"
-            ],
-            eng: ["Sn", "Mn", "Ts",
-                "Wd", "Th", "Fr", "St"
-            ],
-        };
+        rus: ["Пн", "Вт", "Ср",
+            "Чт", "Пт", "Сб", "Вс"
+        ],
+        eng: ["Sn", "Mn", "Ts",
+            "Wd", "Th", "Fr", "St"
+        ],
+    };
 
     const validator = new Validator({
         day: {
@@ -57,7 +61,7 @@ const CalendarView = function (conf) {
         strong: {
             type: Boolean
         },
-    })
+    });
 
     this.selector = selector;
 
@@ -78,16 +82,26 @@ const CalendarView = function (conf) {
         <div class="calendar__row" data-head="dayOfWeek">
         `;
         for (let i = 0; i < weekDays[lang].length; i++) {
-            calendarTable += `<span class="calendar__item" data-weekDays="${i}">${weekDays[lang][i]}</span>`;
+            calendarTable += `
+            <span 
+                class="calendar__item" data-weekDays="${i}">${weekDays[lang][i]}
+            </span>
+            `;
         }
         calendarTable += `</div>`;
         for (let week = 0; week <= 5; week++) {
             calendarTable += `<div class="calendar__row" data-week="${week}">`;
             for (let value = 0; value < 7 && dayOfMonth <= lastDateOfMonth; value++) {
                 if (value < getFirstDayOfMonth() && week === 0) {
-                    calendarTable += `<span class="calendar__item" data-day="emptyItem"></span>`;
+                    calendarTable += `
+                    <span class="calendar__item" data-day="emptyItem"></span>
+                    `;
                 } else {
-                    calendarTable += `<span class="calendar__item" data-day="${dayOfMonth}">${dayOfMonth}</span>`;
+                    calendarTable += `
+                    <span 
+                        class="calendar__item" data-day="${dayOfMonth}">${dayOfMonth}  
+                    </span>
+                    `;
                     dayOfMonth++;
                 }
             }
@@ -95,23 +109,20 @@ const CalendarView = function (conf) {
         }
         calendarTable += `</div>`;
         outTag.innerHTML = calendarTable;
-    };
-
-    this.getMonth = () => {
-        return monthsList[lang][month];
-    };
-
-    this.setMonth = (lang = lang, month = month) => {
-        return monthsList[lang][month];
     }
 
-    this.getYear = () => {
-        return years;
-    }
+    Object.defineProperties(this, {
+        "month": {
+            "get": function() { return monthsList[lang][month]; },
+            "set": function(month) { return monthsList[lang][month]
 
-    this.setYear = (year = years) => {
-        return year;
-    }
+            },
+        },
+        'year': {
+            "get": function() { return years; },
+            "set": function(years) { return years}
+        }
+    })
 
     /**
      * метод вызова следующего месяца
@@ -173,7 +184,7 @@ const CalendarView = function (conf) {
             });
         }
 
-    }
+    };
 
     initRender();
 
@@ -188,4 +199,3 @@ const CalendarView = function (conf) {
         outTag.dispatchEvent(event);
     });
 };
-
