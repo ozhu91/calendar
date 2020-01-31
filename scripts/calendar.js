@@ -6,6 +6,8 @@ export {
     CalendarView
 };
 
+require('babel-polyfill');
+
 const CalendarView = function (conf) {
     const {
         adapt = true,
@@ -19,29 +21,10 @@ const CalendarView = function (conf) {
     let years = day.getFullYear();
     let firstDayOfMonth = new Date(years, month, 1).getDay();
     let lastDateOfMonth = new Date(years, month + 1, 0).getDate();
+    let monthsList = {};
+    let weekDays = {};
+    let url = '../calendarLists.JSON';
     const outTag = document.querySelector(selector);
-
-    const monthsList = {
-        rus: ["Январь", "Февраль", "Март",
-            "Апрель", "Май", "Июнь",
-            "Июль", "Август", "Сентябрь",
-            "Октябрь", "Ноябрь", "Декабрь"
-        ],
-        eng: ["January", "February", "March",
-            "April", "May", "June",
-            "July", "August", "September",
-            "October", "November", "December"
-        ]
-    };
-
-    const weekDays = {
-        rus: ["Пн", "Вт", "Ср",
-            "Чт", "Пт", "Сб", "Вс"
-        ],
-        eng: ["Sn", "Mn", "Ts",
-            "Wd", "Th", "Fr", "St"
-        ],
-    };
 
     const validator = new Validator({
         day: {
@@ -56,7 +39,7 @@ const CalendarView = function (conf) {
             type: String
         },
         border: {
-            type: Boolean
+            type: String
         },
         strong: {
             type: Boolean
@@ -64,6 +47,26 @@ const CalendarView = function (conf) {
     });
 
     this.selector = selector;
+
+    function makeGETRequest(url) {
+    return new Promise(resolve => {
+        let xhr;
+        if (window.XMLHttpRequest) {
+            xhr = new window.XMLHttpRequest();
+        } else {
+            xhr = new window.ActiveXObject("Microsoft.XMLHTTP");
+        }
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                const body = JSON.parse(xhr.responseText);
+                resolve(body);
+            }
+        };
+        xhr.open("GET", url);
+        xhr.send();
+    });
+    }
 
     /**
      * метод перевода недели на русскую раскладку пн-вс
@@ -110,6 +113,8 @@ const CalendarView = function (conf) {
         calendarTable += `</div>`;
         outTag.innerHTML = calendarTable;
     }
+
+    
 
     Object.defineProperties(this, {
         "month": {
@@ -167,26 +172,14 @@ const CalendarView = function (conf) {
             outTag.querySelector(`${selector} span[data-day='${elem}']`).classList.add(`${conf.class}`);
         })
 
-        if (conf.color) {
-            conf.day.forEach(function (elem) {
-                outTag.querySelector(`${selector} span[data-day='${elem}']`).style.color = conf.color;
-            });
+        for (let item in conf)  {
+            if (item in outTag.style) {
+                conf.day.forEach(function (elem) {
+                    outTag.querySelector(`${selector} span[data-day='${elem}']`).style[item] = conf[item];
+                });
+            }
         }
-
-        if (conf.border) {
-            conf.day.forEach(function (elem) {
-                outTag.querySelector(`${selector} span[data-day='${elem}']`).style.border = ".5px solid grey";
-            });
-        }
-        if (conf.strong) {
-            conf.day.forEach(function (elem) {
-                outTag.querySelector(`${selector} span[data-day='${elem}']`).style.fontWeight = 'bold';
-            });
-        }
-
     };
-
-    initRender();
 
     outTag.addEventListener("click", (e) => {
         const day = e.target;
@@ -198,4 +191,16 @@ const CalendarView = function (conf) {
         });
         outTag.dispatchEvent(event);
     });
+
+    (async function makeGetWeekDays() {
+        try {
+            let body = await makeGETRequest(url);
+            console.log(body);
+            weekDays = body['weekDays'];
+            monthsList = body["month"];
+            initRender();
+        } catch (e) {
+            this.setError("Нет данных")
+        }
+    })()
 };

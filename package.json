@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack"
-  },
+    "build": "webpack",
+    "test": "jest --coverage"
+  },  
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ozhu91/calendar.git"
@@ -24,6 +25,9 @@
     "babel-loader": "^8.0.6"
   },
   "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "babel-polyfill": "^6.26.0",
+    "jest": "^25.1.0",
     "webpack-cli": "^3.3.10"
   }
 }

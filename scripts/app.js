@@ -54,7 +54,8 @@ document.querySelector(calendar1.selector).addEventListener('clickCalendar', fun
             day: [target.detail],
             class: "str",
             color: `rgb(${Q_DAY*PARAM}, 0, 0)`,
-            border: false,
+            border: ".5px solid grey",
+            background: "red",
             strong: true,
         })
     }
