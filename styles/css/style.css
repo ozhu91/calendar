@@ -26,6 +26,11 @@ body {
   background-color: rgba(0, 0, 0, 0.055);
 }
 
+.calendar__month span {
+  box-sizing: border-box;
+  margin: 1px;
+}
+
 /* line 26, ../../../Desktop/Month/styles/scss/style.scss */
 .calendar__monthHead {
   display: inline-block;
@@ -45,14 +50,14 @@ body {
   justify-content: start;
   align-items: center;
   height: 30px;
-  margin: 0 0;
+  margin: 2px 0;
 }
 
 /* line 47, ../../../Desktop/Month/styles/scss/style.scss */
 .calendar__item {
   display: inline-block;
   box-sizing: border-box;
-  width: calc(100% / 7);
+  width: calc(100% / 7 - 2px);
   height: 30px;
   line-height: 30px;
   margin: 0 0;
@@ -68,6 +73,8 @@ body {
 /* line 61, ../../../Desktop/Month/styles/scss/style.scss */
 .calendar__activeDay {
   color: #068b8b;
+  box-shadow: 1px 1px 3px #575555 inset; 
+  box-sizing: border-box;
 }
 
 /*# sourceMappingURL=style.css.map */
